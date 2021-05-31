@@ -10,19 +10,6 @@ dc = 50 # duty cycle (0-100) for PWM pin
 pwm = GPIO.PWM(26, 50)  # Initialize PWM on pwmPin 100Hz frequency
 pwm.start(dc)
 
-# def led():
-#     if inp == '1':
-#         if led1_press_state == 0:
-#             GPIO.output(13, GPIO.HIGH)
-#             print("1 led: on")
-#             led1_press_state = 1
-
-#         elif led1_press_state == 1:
-#             GPIO.output(13, GPIO.LOW)
-#             print("1 led: off")
-#             led1_press_state = 0
-
-
 @asyncio.coroutine
 def shell(reader, writer):
 
@@ -53,14 +40,6 @@ def shell(reader, writer):
         elif inp == '2':
             GPIO.output(19, GPIO.LOW)
             print("2 led: off")
-
-        # elif inp == '6':
-        #     GPIO.output(26, GPIO.HIGH)
-        #     print("3 led: on")
-
-        # elif inp == '3':
-        #     GPIO.output(26, GPIO.LOW)
-        #     print("3 led: off")
 
         elif inp == '6':
             p += 5
