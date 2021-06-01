@@ -2,11 +2,8 @@ import asyncio, telnetlib3
 import RPi.GPIO as GPIO
 from functions import Led
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(13, GPIO.OUT)
-GPIO.setup(19, GPIO.OUT)
-
-Led = Led()
+led1 = Led('1', 0, '1', '0', 26)
+led2 = Led('1', 0, '2', '0', 13)
 
 @asyncio.coroutine
 def shell(reader, writer):
@@ -17,10 +14,15 @@ def shell(reader, writer):
 
         keyboardInput = yield from reader.read(1)
 
-        Led.toggleOnOffLed(keyboardInput, ledPin=13, keyboardKey='1', led_number=0)
-        Led.toggleOnOffLed(keyboardInput, ledPin=19, keyboardKey='2', led_number=1)
-        Led.setPwmLedControl(keyboardInput, pwmUpKey='6', pwmDownKey='3', led_number=2)
-        Led.getLedsState(keyboardInput)
+        led1.setNewKeyboardKey(keyboardInput)
+        led1.simpleLedSwitch(led1.keyboard_input, led1.keyboard_pressed_key, led1.led_press_state)
+        led1.printAll(led1.led_light_state, led1.led_press_state, led1.keyboard_input, led1.keyboard_pressed_key, led1.led_pin)
+
+        led2.setNewKeyboardKey(keyboardInput)
+        led2.simpleLedSwitch(led2.keyboard_input, led2.keyboard_pressed_key, led2.led_press_state)
+        led2.printAll(led2.led_light_state, led2.led_press_state, led2.keyboard_input, led2.keyboard_pressed_key, led2.led_pin)
+
+        led1.getLedsStatus(led1.keyboard_pressed_key)
 
         if keyboardInput == '+':
             break

@@ -1,76 +1,76 @@
 import RPi.GPIO as GPIO
 
-led_list = [0, 0, 0]
-led_press_state = 0
-pwmValue = 0
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(26, GPIO.OUT)
-
-pwm = GPIO.PWM(26, 50) # Initialize PWM on pwmPin 100Hz frequency
-pwm.start(pwmValue) # duty cycle (0-100) for PWM pin
 
 class Led:
-    def __init__(self):
-        pass
+    def __init__(self, led_light_state, led_press_state, keyboard_expected_input, keyboard_pressed_key, led_pin):
+        self.led_light_state = led_light_state
+        self.led_press_state = led_press_state
+        self.keyboard_input = keyboard_expected_input
+        self.keyboard_pressed_key = keyboard_pressed_key
+        self.led_pin = led_pin
 
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(led_pin, GPIO.OUT)
 
-    def toggleOnOffLed(self, keyboardInput, ledPin, keyboardKey, led_number):
-        global led_press_state
+    def setLedOutputHigh(self, led_pin):
+        GPIO.output(led_pin, GPIO.HIGH)
+        self.led_light_state = 100
+        self.led_press_state = 1
 
-        if keyboardInput == keyboardKey:
+    def setLedOutputLow(self, led_pin):
+        GPIO.output(led_pin, GPIO.LOW)
+        self.led_light_state = 0
+        self.led_press_state = 0
+
+    def printAll(self, led_light_state, led_press_state, keyboard_expected_input, keyboard_pressed_key, led_pin):
+        print(led_light_state, led_press_state, keyboard_expected_input, keyboard_pressed_key, led_pin)
+
+    def simpleLedSwitch(self, keyboard_input, keyboard_pressed_key, led_press_state):
+        if keyboard_input == keyboard_pressed_key:
             if led_press_state == 0:
-                GPIO.output(ledPin, GPIO.HIGH)
-                print(ledPin, "led: on")
-                led_list[led_number] = 100
-                # writer.write('\r\n"led: on"\r')
-                led_press_state = 1
-
+                self.setLedOutputHigh(self.led_pin)
             elif led_press_state == 1:
-                GPIO.output(ledPin, GPIO.LOW)
-                print(ledPin, "pin led: off")
-                led_list[led_number] = 0
-                # writer.write('\r\n"led: off"\r')
-                led_press_state = 0
+                self.setLedOutputLow(self.led_pin)
 
-        return led_press_state
+    def setNewKeyboardKey(self, new_keyboard_key):
+        self.keyboard_pressed_key = new_keyboard_key
+
+    def getLedsStatus(self, keyboard_pressed_key):
+        if keyboard_pressed_key == 's':
+            print("leds data")
 
 
-    def setPwmLedControl(self, keyboardInput, pwmUpKey, pwmDownKey, led_number):
-        global pwmValue
     
-        if keyboardInput == pwmUpKey:
-            pwmValue += 5
-            if pwmValue > 100:
-                # print("Cannot be higher than 100")
-                # writer.write('\r\n"Cannot be higher than 100"\r')
-                pwmValue = 100
-            else: 
-                pwm.ChangeDutyCycle(pwmValue)
-                led_list[led_number] = pwmValue
-                # print("3 led PWM:", pwmValue)
-                # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
+            
+# led1 = Led('1', 0, 'g', 'g', 13)
 
-        elif keyboardInput == pwmDownKey:
-            pwmValue -= 5
+# led1.simpleLedSwitch(led1.keyboard_input, led1.keyboard_pressed_key, led1.led_press_state)
+# led1.printAll(led1.led_light_state, led1.led_press_state, led1.keyboard_input, led1.keyboard_pressed_key, led1.led_pin)
 
-            if pwmValue < 0:
-                # print("Cannot be lower than 0")
-                # writer.write('\r\n"Cannot be lower than 0"\r')
-                pwmValue = 0
-            else: 
-                pwm.ChangeDutyCycle(pwmValue)
-                led_list[led_number] = pwmValue
-                # print("3 led PWM:", pwmValue)
-                # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
-        
-        return pwmValue
+# time.sleep(1)
+
+# led1.simpleLedSwitch(led1.keyboard_input, led1.keyboard_pressed_key, led1.led_press_state)
+# led1.printAll(led1.led_light_state, led1.led_press_state, led1.keyboard_input, led1.keyboard_pressed_key, led1.led_pin)
 
 
-    def getLedsState(self, keyboardInput):
-        global led_press_state
 
-        if 's' == keyboardInput:
-            print(led_list)
 
-        return None
+
+# time.sleep(1)
+# led1.setLedOutputHigh(led1.led_pin)
+# print(led1.led_light_state)
+# time.sleep(1)
+# led1.setLedOutputLow(led1.led_pin)
+# print(led1.led_light_state)
+# time.sleep(1)
+# led1.setLedOutputHigh(led1.led_pin)
+# print(led1.led_light_state)
+# time.sleep(1)
+# led1.setLedOutputLow(led1.led_pin)
+# print(led1.led_light_state)
+
+
+# led1.toggleOnOffLed(led1.keyboard_input, led1.keyboard_key)
+
+# led1.setStateOff()
+# print(led1.led_state, led1.led_press_state ,led1.keyboard_input, led1.keyboard_key, led1.led_pin)
