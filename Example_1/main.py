@@ -15,7 +15,11 @@ def on_connect(client):
     logging.info("Opened connection to {}".format(client.addrport()))
     broadcast("{} joins the conversation.\n".format(client.addrport()))
     CLIENT_LIST.append(client)
-    client.send("Welcome to the Chat Server, {}.\n".format(client.addrport()))
+    client.send(b"ATA\r")
+    client.send('+++')
+    client.send("Welcome to the Chat Server, {}.".format(client.addrport()))
+    print("Welcome to the Chat Server, {}.".format(client.addrport()))
+    print(b'ATA')
 
 
 def on_disconnect(client):
@@ -68,9 +72,11 @@ def chat(client):
 
     for guest in CLIENT_LIST:
         if guest != client:
-            guest.send("{} says '{}'\n".format(client.addrport(), msg))
+            print("{} says '{}'\n".format(client.addrport(), msg))
+            # guest.send("{} says '{}'\n".format(client.addrport(), msg))
         else:
-            guest.send("You say '{}'\n".format(msg))
+            print("You say '{}'\n".format(msg))
+            # guest.send("You say '{}'\n".format(msg))
 
     cmd = msg.lower()
     # bye = disconnect
