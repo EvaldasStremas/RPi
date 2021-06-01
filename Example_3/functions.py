@@ -1,47 +1,72 @@
 import RPi.GPIO as GPIO
 
+led_list = [0, 0, 0]
 led_press_state = 0
+pwmValue = 0
 
-def toggleOnOffLed(inp, ledPin, keyboardKey):
-    global led_press_state
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(26, GPIO.OUT)
 
-    if inp == keyboardKey:
-        if led_press_state == 0:
-            GPIO.output(ledPin, GPIO.HIGH)
-            print("led: on")
-            # writer.write('\r\n"led: on"\r')
-            led1_press_state = 1
+pwm = GPIO.PWM(26, 50) # Initialize PWM on pwmPin 100Hz frequency
+pwm.start(pwmValue) # duty cycle (0-100) for PWM pin
 
-        elif led_press_state == 1:
-            GPIO.output(ledPin, GPIO.LOW)
-            print("led: off")
-            # writer.write('\r\n"led: off"\r')
-            led1_press_state = 0
+class Led:
+    def toggleOnOffLed(self, keyboardInput, ledPin, keyboardKey, led_number):
+        global led_press_state
 
-    return led1_press_state
+        if keyboardInput == keyboardKey:
+            if led_press_state == 0:
+                GPIO.output(ledPin, GPIO.HIGH)
+                print(ledPin, "led: on")
+                led_list[led_number] = 100
+                # writer.write('\r\n"led: on"\r')
+                led_press_state = 1
 
-def setPwmLedControl(inp, pwmValue, pwm):
-    if inp == '6':
-        pwmValue += 5
-        if pwmValue > 100:
-            # print("Cannot be higher than 100")
-            # writer.write('\r\n"Cannot be higher than 100"\r')
-            pwmValue = 100
-        else: 
-            pwm.ChangeDutyCycle(pwmValue)
-            # print("3 led PWM:", pwmValue)
-            # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
+            elif led_press_state == 1:
+                GPIO.output(ledPin, GPIO.LOW)
+                print(ledPin, "pin led: off")
+                led_list[led_number] = 0
+                # writer.write('\r\n"led: off"\r')
+                led_press_state = 0
 
-    elif inp == '3':
-        pwmValue -= 5
+        return led_press_state
 
-        if pwmValue < 0:
-            print("Cannot be lower than 0")
-            # writer.write('\r\n"Cannot be lower than 0"\r')
-            pwmValue = 0
-        else: 
-            pwm.ChangeDutyCycle(pwmValue)
-            # print("3 led PWM:", pwmValue)
-            # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
+
+    def setPwmLedControl(self, keyboardInput, pwmUpKey, pwmDownKey, led_number):
+        global pwmValue
     
-    return pwmValue
+        if keyboardInput == pwmUpKey:
+            pwmValue += 5
+            if pwmValue > 100:
+                # print("Cannot be higher than 100")
+                # writer.write('\r\n"Cannot be higher than 100"\r')
+                pwmValue = 100
+            else: 
+                pwm.ChangeDutyCycle(pwmValue)
+                led_list[led_number] = pwmValue
+                # print("3 led PWM:", pwmValue)
+                # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
+
+        elif keyboardInput == pwmDownKey:
+            pwmValue -= 5
+
+            if pwmValue < 0:
+                # print("Cannot be lower than 0")
+                # writer.write('\r\n"Cannot be lower than 0"\r')
+                pwmValue = 0
+            else: 
+                pwm.ChangeDutyCycle(pwmValue)
+                led_list[led_number] = pwmValue
+                # print("3 led PWM:", pwmValue)
+                # writer.write('\r\n3 led pwm: ' + str(p) + '\r')
+        
+        return pwmValue
+
+
+    def getLedsState(self, keyboardInput):
+        global led_press_state
+
+        if 's' == keyboardInput:
+            print(led_list)
+
+        return None
