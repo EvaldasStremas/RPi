@@ -11,6 +11,10 @@ pwm = GPIO.PWM(26, 50) # Initialize PWM on pwmPin 100Hz frequency
 pwm.start(pwmValue) # duty cycle (0-100) for PWM pin
 
 class Led:
+    def __init__(self):
+        pass
+
+
     def toggleOnOffLed(self, keyboardInput, ledPin, keyboardKey, led_number):
         global led_press_state
 
